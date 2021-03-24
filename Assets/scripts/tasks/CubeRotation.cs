@@ -19,12 +19,12 @@ public class CubeRotation : MonoBehaviour
   public void OnMove(InputValue input)
   {
       Vector2 inputVec = input.Get<Vector2>();
-      Debug.Log(inputVec);
+      //Debug.Log(inputVec);
       if (inputVec.y==0f){
         Vector3 angvel = self.angularVelocity;
         angvel.x = 0f;
         self.angularVelocity = angvel;
-        Debug.Log("X should stop");
+        //Debug.Log("X should stop");
       }
       else{
         Vector3 torque = (new Vector3 (inputVec.y*rotationSpeed,0,0))*self.mass;
@@ -44,7 +44,7 @@ public class CubeRotation : MonoBehaviour
   {
 
       float inputF = input.Get<float>();
-      Debug.Log(inputF);
+      //Debug.Log(inputF);
       if(inputF==0f){
         Vector3 angvel = self.angularVelocity;
         angvel.y = 0f;
