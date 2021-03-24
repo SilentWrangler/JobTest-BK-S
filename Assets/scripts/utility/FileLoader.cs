@@ -12,6 +12,7 @@ public class FileLoader : MonoBehaviour
   public TMP_Dropdown fileChoice;
   public Texture2D[] example;
   public Button convert, save;
+  public TextMeshProUGUI pathLabel;
   Texture2D inp;
   Texture2D outp;
   string fname;
@@ -41,6 +42,7 @@ public class FileLoader : MonoBehaviour
         fileChoice.options.Add (optionData);
         fileChoice.value = 1;
       }
+      pathLabel.text = Application.persistentDataPath;
     }
 
     // Update is called once per frame
@@ -48,7 +50,9 @@ public class FileLoader : MonoBehaviour
     {
 
     }
-
+    public void PathToBuffer(){
+      GUIUtility.systemCopyBuffer = pathLabel.text;
+    }
     public void LoadImage(int option){
       string path = fileChoice.options[option].text;
       Texture2D tex = LoadTexture(Application.persistentDataPath + "/"+path);
