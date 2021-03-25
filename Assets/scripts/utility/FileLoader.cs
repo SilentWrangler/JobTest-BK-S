@@ -11,7 +11,7 @@ public class FileLoader : MonoBehaviour
   public Image output;
   public TMP_Dropdown fileChoice;
   public Texture2D[] example;
-  public Button convert, save;
+  public Button convert, save, load;
   public TextMeshProUGUI pathLabel;
   Texture2D inp;
   Texture2D outp;
@@ -27,6 +27,17 @@ public class FileLoader : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+      #if !UNITY_EDITOR && UNITY_WEBGL
+        // disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keabord inputs
+        WebGLInput.captureAllKeyboardInput = false;
+        fileChoice.gameObject.SetActive(false);
+        pathLabel.gameObject.SetActive(false);
+        load.gameObject.SetActive(true);
+        return;
+      #endif
+
+
+
       if (!PlayerPrefs.HasKey("example")){
         for (int i=0; i<example.Length;i++){
           string path = Application.persistentDataPath + "/example"+i.ToString()+".png";
@@ -42,7 +53,7 @@ public class FileLoader : MonoBehaviour
         fileChoice.options.Add (optionData);
         fileChoice.value = 1;
       }
-      pathLabel.text = Application.persistentDataPath;
+      pathLabel.text = Application.platform.ToString();
     }
 
     // Update is called once per frame
@@ -52,6 +63,15 @@ public class FileLoader : MonoBehaviour
     }
     public void PathToBuffer(){
       GUIUtility.systemCopyBuffer = pathLabel.text;
+    }
+
+    public void LoadImage(Texture2D tex){
+      Sprite s = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), new Vector2(0.5f,0.5f));
+
+      input.sprite = s;
+      inp = tex;
+      convert.interactable = true;
+      save.interactable = false;
     }
     public void LoadImage(int option){
       string path = fileChoice.options[option].text;
