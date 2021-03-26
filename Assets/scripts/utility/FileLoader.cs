@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
@@ -24,12 +24,15 @@ public class FileLoader : MonoBehaviour
   const float lumBlue = 0.0722f;
 
 
+  [DllImport("__Internal")]
+  private static extern void ImageSaverSaveResult(byte[] data, int size, string name);
+
     // Start is called before the first frame update
     void Start()
     {
       #if !UNITY_EDITOR && UNITY_WEBGL
         // disable WebGLInput.captureAllKeyboardInput so elements in web page can handle keabord inputs
-        WebGLInput.captureAllKeyboardInput = false;
+        //WebGLInput.captureAllKeyboardInput = false;
         fileChoice.gameObject.SetActive(false);
         pathLabel.gameObject.SetActive(false);
         load.gameObject.SetActive(true);
@@ -94,6 +97,12 @@ public class FileLoader : MonoBehaviour
 
 
     public void SaveImage(Texture2D tex, string path){
+      if (Application.platform== RuntimePlatform.WebGLPlayer){
+        byte[] data = tex.EncodeToPNG();
+        string name = "grayscale-"+System.DateTime.Now.ToString()+".png";
+        ImageSaverSaveResult(data,data.Length,name);
+        return;
+      }
       System.IO.File.WriteAllBytes (path, tex.EncodeToPNG());
     }
 
@@ -102,9 +111,11 @@ public class FileLoader : MonoBehaviour
       outp = new Texture2D(inp.width, inp.height, inp.format, false);
       Color[] pixels = inp.GetPixels();
       for (int i=0;i<pixels.Length;i++) {
-        pixels[i].r = pixels[i].grayscale;
-        pixels[i].g = pixels[i].grayscale;
-        pixels[i].b = pixels[i].grayscale;
+        float lum = pixels[i].r*lumRed + pixels[i].g*lumGreen + pixels[i].b * lumBlue;
+
+        pixels[i].r = lum;
+        pixels[i].g = lum;
+        pixels[i].b = lum;
       }
       outp.SetPixels(pixels);
       outp.Apply();

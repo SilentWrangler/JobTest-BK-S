@@ -7,7 +7,7 @@ using TMPro;
 public class PolishNotationParser : MonoBehaviour
 {
 
-  public UnityEngine.UI.InputField output;
+  public TMP_InputField output;
 
     // Start is called before the first frame update
     void Start()
